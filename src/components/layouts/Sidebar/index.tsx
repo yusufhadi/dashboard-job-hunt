@@ -77,6 +77,7 @@ const Sidebar: FC<SidebarProps> = ({}) => {
         <Button
           className="w-full justify-start rounded-none hover:text-primary"
           variant={"ghost"}
+          onClick={() => router.push("/settings")}
         >
           <RxGear className="mr-2 text-lg" />
           Settings
