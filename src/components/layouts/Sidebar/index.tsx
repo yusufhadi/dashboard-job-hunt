@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import React, { FC } from "react";
 import { IoHomeOutline } from "react-icons/io5";
@@ -8,10 +10,13 @@ import { HiOutlineClipboardDocumentList } from "react-icons/hi2";
 import { LuCalendarRange } from "react-icons/lu";
 import { RxGear } from "react-icons/rx";
 import { SlLogout } from "react-icons/sl";
+import { useRouter } from "next/navigation";
 
 interface SidebarProps {}
 
 const Sidebar: FC<SidebarProps> = ({}) => {
+  const router = useRouter();
+
   return (
     <div className="pb-12 min-h-screen">
       <div className="space-y-4 py-4">
@@ -22,6 +27,7 @@ const Sidebar: FC<SidebarProps> = ({}) => {
           <Button
             className="w-full justify-start rounded-none hover:text-primary"
             variant={"ghost"}
+            onClick={() => router.push("/")}
           >
             <IoHomeOutline className="mr-2 text-lg" />
             Home
@@ -50,6 +56,7 @@ const Sidebar: FC<SidebarProps> = ({}) => {
           <Button
             className="w-full justify-start rounded-none hover:text-primary"
             variant={"ghost"}
+            onClick={() => router.push("/job-listings")}
           >
             <HiOutlineClipboardDocumentList className="mr-2 text-lg" />
             Job Listings
