@@ -11,6 +11,7 @@ import { LuCalendarRange } from "react-icons/lu";
 import { RxGear } from "react-icons/rx";
 import { SlLogout } from "react-icons/sl";
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 interface SidebarProps {}
 
@@ -85,6 +86,7 @@ const Sidebar: FC<SidebarProps> = ({}) => {
         <Button
           className="w-full text-red-500 hover:bg-red-200 hover:text-red-500 justify-start rounded-none "
           variant={"ghost"}
+          onClick={() => signOut()}
         >
           <SlLogout className="mr-2 text-lg" />
           Logout
