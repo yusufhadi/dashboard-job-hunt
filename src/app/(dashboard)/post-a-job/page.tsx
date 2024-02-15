@@ -1,12 +1,5 @@
 "use client";
 
-import { jobFormSchema } from "@/lib/form-schema";
-import React, { FC, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeftIcon } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
 import {
   Form,
   FormControl,
@@ -23,21 +16,44 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { jobFormSchema } from "@/lib/form-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeftIcon } from "lucide-react";
+import { FC, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
+import CKEditor from "@/components/organisms/CKEditor";
 import FieldInput from "@/components/organisms/FieldInput";
+import InputBenefits from "@/components/organisms/InputBenefits";
+import InputSkills from "@/components/organisms/InputSkills";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { RadioGroup } from "@radix-ui/react-radio-group";
 import { RadioGroupItem } from "@/components/ui/radio-group";
 import { JOBTYPES } from "@/constants";
-import InputSkills from "@/components/organisms/InputSkills";
-import CKEditor from "@/components/organisms/CKEditor";
-import InputBenefits from "@/components/organisms/InputBenefits";
-import { Button } from "@/components/ui/button";
+import { fetcher } from "@/lib/utils";
+import { CategoryJob } from "@prisma/client";
+import { RadioGroup } from "@radix-ui/react-radio-group";
+import moment from "moment";
+import { useSession } from "next-auth/react";
+import useSWR from "swr";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 
 interface PostJobPageProps {}
 
 const PostJobPage: FC<PostJobPageProps> = ({}) => {
   const [editorLoaded, setEditorLoaded] = useState<boolean>(false);
+  const { data, error, isLoading } = useSWR<CategoryJob[]>(
+    "/api/job/categories",
+    fetcher
+  );
+
+  const { data: session } = useSession();
+
+  const router = useRouter();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof jobFormSchema>>({
     resolver: zodResolver(jobFormSchema),
@@ -46,8 +62,41 @@ const PostJobPage: FC<PostJobPageProps> = ({}) => {
     },
   });
 
-  const onSubmit = (val: z.infer<typeof jobFormSchema>) => {
-    console.log(val);
+  const onSubmit = async (val: z.infer<typeof jobFormSchema>) => {
+    try {
+      const body: any = {
+        applicants: 0,
+        benefits: val.benefits,
+        categoryId: val.categoryId,
+        companayId: session?.id!!,
+        datePosted: moment().toDate(),
+        descriprion: val.jobDescription,
+        dueDate: moment().add(1, "M").toDate(),
+        jobType: val.jobType,
+        needs: 20,
+        niceToHaves: val.niceToHaves,
+        requiredSkills: val.requiredSkills,
+        responsibility: val.responsibility,
+        roles: val.roles,
+        salaryFrom: val.salaryFrom,
+        salaryTo: val.salaryTo,
+        whoYouAre: val.whoYouAre,
+      };
+
+      await fetch("/api/job", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      await router.push("/job-listings");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Please Try Again",
+      });
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -189,13 +238,11 @@ const PostJobPage: FC<PostJobPageProps> = ({}) => {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="m@example.com">
-                        m@example.com
-                      </SelectItem>
-                      <SelectItem value="m@google.com">m@google.com</SelectItem>
-                      <SelectItem value="m@support.com">
-                        m@support.com
-                      </SelectItem>
+                      {data?.map((item: any) => (
+                        <SelectItem key={item.id} value={item.id}>
+                          {item.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
