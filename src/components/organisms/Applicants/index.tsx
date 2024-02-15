@@ -1,19 +1,20 @@
-import React, { FC } from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { JOB_APPLICANT_COLUMS, JOB_APPLICANT_DATA } from "@/constants";
+import { JOB_APPLICANT_COLUMS } from "@/constants";
+import { FC } from "react";
 import ButtonActionTabel from "../ButtonActionTable";
 
-interface ApplicantsProps {}
+interface ApplicantsProps {
+  applicants: any;
+}
 
-const Applicants: FC<ApplicantsProps> = ({}) => {
+const Applicants: FC<ApplicantsProps> = ({ applicants }) => {
   return (
     <Table>
       <TableHeader>
@@ -25,15 +26,18 @@ const Applicants: FC<ApplicantsProps> = ({}) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {JOB_APPLICANT_DATA.map((item: any, i: number) => (
-          <TableRow key={item.name + i}>
-            <TableCell>{item.name}</TableCell>
-            <TableCell>{item.appliedDate}</TableCell>
-            <TableCell>
-              <ButtonActionTabel url="" />
-            </TableCell>
-          </TableRow>
-        ))}
+        {applicants && (
+          <>
+            {applicants.map((item: any, i: number) => (
+              <TableRow key={item.id + i}>
+                <TableCell>{item.user.name}</TableCell>
+                <TableCell>
+                  <ButtonActionTabel url="" />
+                </TableCell>
+              </TableRow>
+            ))}
+          </>
+        )}
       </TableBody>
     </Table>
   );

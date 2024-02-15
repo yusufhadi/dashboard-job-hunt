@@ -72,7 +72,7 @@ const JobListingsPage: FC<JobListingsPageProps> = async ({}) => {
                   {item.applicants} / {item.needs}
                 </TableCell>
                 <TableCell>
-                  <ButtonActionTabel url="/job-detail/1" />
+                  <ButtonActionTabel url={`/job-detail/${item.id}`} />
                 </TableCell>
               </TableRow>
             ))}
